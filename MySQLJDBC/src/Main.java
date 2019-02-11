@@ -2,6 +2,7 @@ import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.Scanner;
 
  
 /**
@@ -59,9 +60,25 @@ public class Main {
         // 
         // String sql = "SELECT first_name, last_name, email " +
         //             "FROM candidates";
+    	boolean run = true;
+    	
+        Scanner scan = new Scanner(System.in);
         
-    	query3();
-    	query4();
+        while(run) {
+        	int input = scan.nextInt();
+        	if(input == 0 ) {
+        		break;
+        	}
+        	else if(input == 3 ) {
+        		query3();
+        	}
+        	else if(input == 4 ) {
+        		query4();
+        	}
+        	
+        }
+        
+    	
         
     }
 }
