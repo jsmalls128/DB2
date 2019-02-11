@@ -55,11 +55,15 @@ public class Main {
 	            System.out.println(ex.getMessage());
 	        }
 	}
-    
+    public static void menu() {
+    	
+    }
     public static void main(String[] args) { 
         // 
         // String sql = "SELECT first_name, last_name, email " +
         //             "FROM candidates";
+    	System.out.println("Commands: Quit = 0\t Query 1 = 1\t Query 2 = 2 \t Query 3 = 3 \t Query 4 = 4 \tQuery 5 = 5 \tQuery 6 = 6");
+    	System.out.println("Please enter an input");
     	boolean run = true;
     	
         Scanner scan = new Scanner(System.in);
