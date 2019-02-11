@@ -61,6 +61,7 @@ public class Main {
         //             "FROM candidates";
         
     	query3();
+    	query4();
         
     }
 }
