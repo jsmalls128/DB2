@@ -11,6 +11,55 @@ import java.util.Scanner;
  */
 public class Main {
 	
+	public static void query1() {
+		String sql = "SELECT a.dept_name, MAX(a.sal_f/a.sal_m) as ratio FROM "
+				+ "(SELECT dept_name, AVG(if(gender='F', salary, null)) as sal_f, AVG(if(gender='M', salary, null)) as sal_m "
+				+ "FROM departments "
+				+ "INNER JOIN dept_emp "
+				+ "ON departments.dept_no = dept_emp.dept_no "
+				+ "INNER JOIN salaries "
+				+ "ON dept_emp.emp_no = salaries.emp_no "
+				+ "INNER JOIN employees "
+				+ "ON salaries.emp_no = employees.emp_no "
+				+ "GROUP BY dept_name ) a "
+				+ "LIMIT 100;";
+				
+		try (Connection conn = MySQLJDBCUtil.getConnection();
+	             Statement stmt  = conn.createStatement();
+	             ResultSet rs    = stmt.executeQuery(sql)) {
+	           System.out.println("dept_name\tsalary_ratio");
+	            // loop through the result set
+	            while (rs.next()) {
+	                System.out.println(rs.getString("dept_name") + "\t" + rs.getString("ratio"));
+	                    
+	            }
+	        } catch (SQLException ex) {
+	            System.out.println(ex.getMessage());
+	        }
+	}
+	
+	public static void query2() {
+		String sql = "SELECT first_name, last_name, MAX(DATEDIFF(from_date, to_date)) as diff "
+				+ "FROM employees "
+				+ "INNER JOIN dept_manager "
+				+ "ON employees.emp_no = dept_manager.emp_no "
+				+ "LIMIT 100;";
+				
+		try (Connection conn = MySQLJDBCUtil.getConnection();
+	             Statement stmt  = conn.createStatement();
+	             ResultSet rs    = stmt.executeQuery(sql)) {
+	           System.out.println("first_name\tlast_name\tdiff");
+	            // loop through the result set
+	            while (rs.next()) {
+	                System.out.println(rs.getString("first_name") +  "\t" + rs.getString("last_name") + "\t" + rs.getString("diff"));
+	                                   
+	                    
+	            }
+	        } catch (SQLException ex) {
+	            System.out.println(ex.getMessage());
+	        }
+	}
+	
 	public static void query3() {
 		String sql = "WITH fifties AS (SELECT dept_no, Count(*) AS fifties_employees FROM employees NATURAL JOIN dept_emp "
 				+ "WHERE birth_date BETWEEN '1949-12-31' AND '1960-01-01' GROUP BY dept_no),"
@@ -73,6 +122,12 @@ public class Main {
         	if(input == 0 ) {
         		break;
         	}
+			else if(input == 1) {
+				query1();
+			}
+			else if(input == 2) {
+				query2();
+			}
         	else if(input == 3 ) {
         		query3();
         	}
