@@ -12,17 +12,11 @@ import java.util.Scanner;
 public class Main {
 	
 	public static void query1() {
-		String sql = "SELECT a.dept_name, MAX(a.sal_f/a.sal_m) as ratio FROM "
-				+ "(SELECT dept_name, AVG(if(gender='F', salary, null)) as sal_f, AVG(if(gender='M', salary, null)) as sal_m "
-				+ "FROM departments "
-				+ "INNER JOIN dept_emp "
-				+ "ON departments.dept_no = dept_emp.dept_no "
-				+ "INNER JOIN salaries "
-				+ "ON dept_emp.emp_no = salaries.emp_no "
-				+ "INNER JOIN employees "
-				+ "ON salaries.emp_no = employees.emp_no "
-				+ "GROUP BY dept_name ) a "
-				+ "LIMIT 100;";
+		String sql = "with" + 
+				"males_sal as (SELECT dept_no, avg(salary) as Msal from employees natural join salaries, dept_emp where gender ='M' AND dept_emp.emp_no = employees.emp_no group by dept_no )," + 
+				"fem_sal as (SELECT dept_no, avg(salary) as Fsal from employees natural join salaries, dept_emp where gender ='F' AND dept_emp.emp_no = employees.emp_no group by dept_no)" + 
+				"select dept_name, (fem_sal.Fsal/males_sal.Msal) as ratio from (males_sal natural join fem_sal) natural join departments\r\n" + 
+				"where (fem_sal.Fsal/males_sal.Msal) = (select max((fem_sal.Fsal/males_sal.Msal)) from (males_sal natural join fem_sal) natural join departments)";
 				
 		try (Connection conn = MySQLJDBCUtil.getConnection();
 	             Statement stmt  = conn.createStatement();
@@ -85,6 +79,7 @@ public class Main {
 	            System.out.println(ex.getMessage());
 	        }
 	}
+	
 	public static void query4() {
 		String sql = "SELECT *  from (employees e NATURAL JOIN salaries s)" +
 				"where gender = 'F' AND timediff(birth_date,'1990-01-01') < 0 AND salary >= 80000 AND emp_no IN ( SELECT emp_no from dept_manager)";
@@ -105,9 +100,7 @@ public class Main {
 	            System.out.println(ex.getMessage());
 	        }
 	}
-    public static void menu() {
-    	
-    }
+  
     public static void main(String[] args) { 
         // 
         // String sql = "SELECT first_name, last_name, email " +
