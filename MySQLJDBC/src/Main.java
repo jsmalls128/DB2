@@ -12,7 +12,7 @@ import java.util.Scanner;
 public class Main {
 	
 	public static void query1() {
-		String sql = "SELECT a.dept_name, a.sal_f/a.sal_m as ratio FROM "
+		String sql = "SELECT a.dept_name, MAX(a.sal_f/a.sal_m) as ratio FROM "
 				+ "(SELECT dept_name, AVG(if(gender='F', salary, null)) as sal_f, AVG(if(gender='M', salary, null)) as sal_m "
 				+ "FROM departments "
 				+ "INNER JOIN dept_emp "
@@ -22,8 +22,7 @@ public class Main {
 				+ "INNER JOIN employees "
 				+ "ON salaries.emp_no = employees.emp_no "
 				+ "GROUP BY dept_name ) a "
-				+ "ORDER BY ratio DESC "
-				+ "LIMIT 1;";
+				+ "LIMIT 100;";
 				
 		try (Connection conn = MySQLJDBCUtil.getConnection();
 	             Statement stmt  = conn.createStatement();
