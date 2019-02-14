@@ -12,11 +12,12 @@ import java.util.Scanner;
 public class Main {
 	
 	public static void query1() {
-		String sql = "with" + 
+		String sql = "with\r\n" + 
 				"males_sal as (SELECT dept_no, avg(salary) as Msal from employees natural join salaries, dept_emp where gender ='M' AND dept_emp.emp_no = employees.emp_no group by dept_no )," + 
 				"fem_sal as (SELECT dept_no, avg(salary) as Fsal from employees natural join salaries, dept_emp where gender ='F' AND dept_emp.emp_no = employees.emp_no group by dept_no)" + 
 				"select dept_name, (fem_sal.Fsal/males_sal.Msal) as ratio from (males_sal natural join fem_sal) natural join departments\r\n" + 
 				"where (fem_sal.Fsal/males_sal.Msal) = (select max((fem_sal.Fsal/males_sal.Msal)) from (males_sal natural join fem_sal) natural join departments)";
+		
 				
 		try (Connection conn = MySQLJDBCUtil.getConnection();
 	             Statement stmt  = conn.createStatement();
@@ -46,7 +47,7 @@ public class Main {
 	           System.out.println("first_name\tlast_name\tdiff");
 	            // loop through the result set
 	            while (rs.next()) {
-	                System.out.println(rs.getString("first_name") +  "\t" + rs.getString("last_name") + "\t" + rs.getString("diff"));
+	                System.out.println(rs.getString("first_name") +  "\t\t" + rs.getString("last_name") + "\t" + rs.getString("diff"));
 	                                   
 	                    
 	            }
@@ -111,7 +112,15 @@ public class Main {
 		try (Connection conn = MySQLJDBCUtil.getConnection();
 	             Statement stmt  = conn.createStatement();
 	             ResultSet rs    = stmt.executeQuery(sql)) {
-					if(rs.getRow() > 0) {
+			int size = 0;  
+			if (rs != null)   
+			{  
+				rs.beforeFirst();  
+				 rs.last();  
+				size = rs.getRow();
+			}
+					if(size > 0) {
+						rs.beforeFirst();  
 			           System.out.println("emp_no\tdept_no\tfrom_date\tto_date\t\temp_no\tdept_no\tfromdate\ttodate");
 			            // loop through the result set
 			            while (rs.next()) {
