@@ -33,11 +33,12 @@ public class Main {
 	}
 	
 	public static void query2() {
-		String sql = "SELECT first_name, last_name, MAX(DATEDIFF(from_date, to_date)) as diff "
+		String sql = "SELECT first_name, last_name, DATEDIFF(to_date, from_date) as diff "
 				+ "FROM employees "
 				+ "INNER JOIN dept_manager "
 				+ "ON employees.emp_no = dept_manager.emp_no "
-				+ "LIMIT 100;";
+				+ "ORDER BY diff DESC "
+				+ "LIMIT 1;";
 				
 		try (Connection conn = MySQLJDBCUtil.getConnection();
 	             Statement stmt  = conn.createStatement();
