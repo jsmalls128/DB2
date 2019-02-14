@@ -99,12 +99,56 @@ public class Main {
 	            System.out.println(ex.getMessage());
 	        }
 	}
-  
+	
+	public static void query5(String emp1, String emp2) {
+			String sql = "SELECT E1.emp_no as employee1, E1.dept_no, E1.from_date as e1from,E1.to_date as e1to,E2.emp_no as employee2, "
+					+ "E2.dept_no,E2.from_date as e2from,E2.to_date as e2to\r\n" + 
+				"FROM dept_emp E1   \r\n" + 
+				"JOIN dept_emp E2 ON E2.dept_no = E1.dept_no  \r\n" + 
+				"WHERE E1.emp_no = "+emp1+"  AND  E2.emp_no ="+emp2+"  AND ((E2.from_date BETWEEN E1.from_date AND E1.to_date) "
+						+ "AND (E2.to_date BETWEEN E1.from_date AND E1.to_date))";
+		try (Connection conn = MySQLJDBCUtil.getConnection();
+	             Statement stmt  = conn.createStatement();
+	             ResultSet rs    = stmt.executeQuery(sql)) {
+					if(rs.getRow() > 0) {
+			           System.out.println("emp_no\tdept_no\tfrom_date\tto_date\t\temp_no\tdept_no\tfromdate\ttodate");
+			            // loop through the result set
+			            while (rs.next()) {
+			                System.out.println(rs.getString("employee1") +  "\t" + rs.getString("dept_no") + "\t" + rs.getString("e1from") + "   \t" + 
+			                                   rs.getString("e1to") + "   \t" + rs.getString("employee2") + "\t" + rs.getString("dept_no") 
+			                                   +  "\t" + rs.getString("e2from") +  "\t" + rs.getString("e2to"));
+			            }
+					}
+					else {
+						query6(emp1,emp2);
+					}
+	        } catch (SQLException ex) {
+	            System.out.println(ex.getMessage());
+	        }
+	}
+	public static void query6(String emp1, String emp2){
+		String sql = "SELECT * FROM dept_emp E1 JOIN dept_emp E3 ON E3.dept_no = E1.dept_noWHERE (( E1.emp_no =" + emp1+ ") "
+				+ "AND (E3.from_date BETWEEN E1.from_date AND E1.to_date) AND (E3.to_date BETWEEN E1.from_date AND E1.to_date)) "
+				+ "JOIN dept_emp E2 ON E3.dept_no = E1.dept_no "
+				+ "WHERE (((E2.emp_no =" + emp2 + ") AND (E2.from_date BETWEEN E3.from_date AND E3.to_date) AND (E2.to_date BETWEEN E3.from_date AND E3.to_date))";
+
+		try (Connection conn = MySQLJDBCUtil.getConnection();
+		Statement stmt = conn.createStatement();
+		ResultSet rs = stmt.executeQuery(sql)) {
+			System.out.println("emp_no\tdept_no\tfromdate\ttodate");
+			// loop through the result set
+			while (rs.next()) {
+				System.out.println(rs.getString("emp_no") + "\t" + rs.getString("from_date") + "\t" + rs.getString("to_date") );
+			}
+		} catch (SQLException ex) {
+		System.out.println(ex.getMessage());
+		}
+	}
     public static void main(String[] args) { 
         // 
         // String sql = "SELECT first_name, last_name, email " +
         //             "FROM candidates";
-    	System.out.println("Commands: Quit = 0\t Query 1 = 1\t Query 2 = 2 \t Query 3 = 3 \t Query 4 = 4 \tQuery 5 = 5 \tQuery 6 = 6");
+    	System.out.println("Commands: Quit = 0\t Query 1 = 1\t Query 2 = 2 \t Query 3 = 3 \t Query 4 = 4 \tQuery 5 = 5");
     	System.out.println("Please enter an input");
     	boolean run = true;
     	
@@ -126,6 +170,14 @@ public class Main {
         	}
         	else if(input == 4 ) {
         		query4();
+        	}
+        	else if(input == 5 ) {
+        		System.out.println("Enter employee1 ID");
+        		scan.nextLine();
+        		String emp1_id = scan.next();
+        		System.out.println("Enter employee2 ID");
+        		String emp2_id = scan.next();
+        		query5(emp1_id,emp2_id);
         	}
         	
         }
